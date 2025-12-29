@@ -42,12 +42,30 @@ const AppointmentForm = () => {
     };
     fetchDoctors();
   }, []);
+  const [loading, setLoading] = useState(false);
+
+  const validate = () => {
+    if (!firstName || !lastName || !email || !phone || !appointmentDate) {
+      toast.error("Please fill the required fields: First Name, Last Name, Email, Phone, Appointment Date");
+      return false;
+    }
+    // simple email regex
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please provide a valid email address");
+      return false;
+    }
+    return true;
+  };
+
   const handleAppointment = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
+    setLoading(true);
     try {
       const hasVisitedBool = Boolean(hasVisited);
       const { data } = await axios.post(
-        "http://localhost:4000/api/v1/appointment/post",
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/appointment/post`,
         {
           firstName,
           lastName,
@@ -69,21 +87,23 @@ const AppointmentForm = () => {
         }
       );
       toast.success(data.message);
-      setFirstName(""),
-        setLastName(""),
-        setEmail(""),
-        setPhone(""),
-        setNic(""),
-        setDob(""),
-        setGender(""),
-        setAppointmentDate(""),
-        setDepartment(""),
-        setDoctorFirstName(""),
-        setDoctorLastName(""),
-        setHasVisited(""),
-        setAddress("");
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPhone("");
+      setNic("");
+      setDob("");
+      setGender("");
+      setAppointmentDate("");
+      setDepartment("Pediatrics");
+      setDoctorFirstName("");
+      setDoctorLastName("");
+      setHasVisited(false);
+      setAddress("");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message || "Failed to book appointment");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,18 +113,26 @@ const AppointmentForm = () => {
         <h2>Appointment</h2>
         <form onSubmit={handleAppointment}>
           <div>
-            <input
-              type="text"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
+            <label className="sr-only">First Name
+              <input
+                type="text"
+                placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+                aria-required="true"
+              />
+            </label>
+            <label className="sr-only">Last Name
+              <input
+                type="text"
+                placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+                aria-required="true"
+              />
+            </label>
           </div>
           <div>
             <input
@@ -199,15 +227,26 @@ const AppointmentForm = () => {
               flexDirection: "row",
             }}
           >
-            <p style={{ marginBottom: 0 }}>Have you visited before?</p>
-            <input
-              type="checkbox"
-              checked={hasVisited}
-              onChange={(e) => setHasVisited(e.target.checked)}
-              style={{ flex: "none", width: "25px" }}
-            />
+            <label style={{ marginBottom: 0 }}>
+              <input
+                type="checkbox"
+                checked={hasVisited}
+                onChange={(e) => setHasVisited(e.target.checked)}
+                style={{ marginRight: 8 }}
+                aria-label="Have you visited before"
+              />
+              Have you visited before?
+            </label>
           </div>
-          <button style={{ margin: "0 auto" }}>GET APPOINTMENT</button>
+          <button
+            className="btn-primary"
+            style={{ margin: "0 auto" }}
+            disabled={loading}
+            aria-busy={loading}
+            aria-disabled={loading}
+          >
+            {loading ? "Booking..." : "GET APPOINTMENT"}
+          </button>
         </form>
       </div>
     </>

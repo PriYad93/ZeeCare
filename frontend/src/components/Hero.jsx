@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Hero = ({ title, imageUrl }) => {
   return (
@@ -12,16 +13,16 @@ const Hero = ({ title, imageUrl }) => {
             appointment or explore services to begin your wellness journey.
           </p>
           <div className="mt-6 flex gap-4">
-            <a href="/appointment" className="btn purple-btn">
+            <Link to="/appointment" className="btn purple-btn" aria-label="Book Appointment">
               Book Appointment
-            </a>
-            <a href="/about" className="btn white-btn">
+            </Link>
+            <Link to="/about" className="btn white-btn" aria-label="Learn more about ZeeCare">
               Learn More
-            </a>
+            </Link>
           </div>
         </div>
         <div className="banner">
-          <img src={imageUrl} alt="hero" className="animated-image rounded-lg shadow-lg" />
+          <img src={imageUrl} alt="Healthcare professionals treating a patient" className="animated-image rounded-lg shadow-lg" />
           <span>
             <img src="/Vector.png" alt="vector" />
           </span>

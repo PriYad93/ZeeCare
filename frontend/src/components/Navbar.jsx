@@ -8,19 +8,22 @@ import { Context } from "../main";
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const { isAuthenticated, setIsAuthenticated } = useContext(Context);
+  const [logoutLoading, setLogoutLoading] = useState(false);
 
   const handleLogout = async () => {
-    await axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/user/patient/logout`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        toast.success(res.data.message);
-        setIsAuthenticated(false);
-      })
-      .catch((err) => {
-        toast.error(err.response?.data?.message || 'Logout failed');
-      });
+    setLogoutLoading(true);
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/user/patient/logout`,
+        { withCredentials: true }
+      );
+      toast.success(res.data.message);
+      setIsAuthenticated(false);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Logout failed");
+    } finally {
+      setLogoutLoading(false);
+    }
   };
 
   const navigateTo = useNavigate();
@@ -31,35 +34,41 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={"container"}>
+      <nav className={"container"} role="navigation" aria-label="Main">
         <div className="logo">
           <img src="/logo.png" alt="logo" className="logo-img" />
         </div>
         <div className={show ? "navLinks showmenu" : "navLinks"}>
-          <div className="links">
-            <Link to={"/"} onClick={() => setShow(!show)}>
+          <div className="links" id="primary-navigation">
+            <Link to={"/"} onClick={() => setShow(!show)} aria-label="Home">
               Home
             </Link>
-            <Link to={"/appointment"} onClick={() => setShow(!show)}>
+            <Link to={"/appointment"} onClick={() => setShow(!show)} aria-label="Appointment">
               Appointment
             </Link>
-            <Link to={"/about"} onClick={() => setShow(!show)}>
+            <Link to={"/about"} onClick={() => setShow(!show)} aria-label="About Us">
               About Us
             </Link>
           </div>
           {isAuthenticated ? (
-            <button className="logoutBtn btn" onClick={handleLogout}>
+            <button className="logoutBtn btn" onClick={handleLogout} disabled={logoutLoading} aria-busy={logoutLoading} aria-label="Logout">
               LOGOUT
             </button>
           ) : (
-            <button className="loginBtn btn" onClick={goToLogin}>
+            <button className="loginBtn btn" onClick={goToLogin} aria-label="Login">
               LOGIN
             </button>
           )}
         </div>
-        <div className="hamburger" onClick={() => setShow(!show)}>
+        <button
+          className="hamburger"
+          onClick={() => setShow(!show)}
+          aria-label="Toggle navigation"
+          aria-expanded={show}
+          aria-controls="primary-navigation"
+        >
           <GiHamburgerMenu />
-        </div>
+        </button>
       </nav>
     </>
   );
