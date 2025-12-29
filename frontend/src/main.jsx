@@ -24,8 +24,13 @@ const AppWrapper = () => {
   );
 };
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <AppWrapper />
-  </React.StrictMode>
-);
+if (typeof document !== 'undefined') {
+  const rootEl = document.getElementById("root");
+  if (rootEl) {
+    ReactDOM.createRoot(rootEl).render(
+      <React.StrictMode>
+        <AppWrapper />
+      </React.StrictMode>
+    );
+  }
+}

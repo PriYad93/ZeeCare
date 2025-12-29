@@ -11,7 +11,7 @@ const Messages = () => {
     const fetchMessages = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:4000/api/v1/message/getall",
+          `${import.meta.env.VITE_API_BASE_URL || 'https://zeecare-backend-j180.onrender.com'}/api/v1/message/getall`,
           { withCredentials: true }
         );
         setMessages(data.messages);

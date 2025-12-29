@@ -34,7 +34,7 @@ const AppointmentForm = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       const { data } = await axios.get(
-        "http://localhost:4000/api/v1/user/doctors",
+        `${import.meta.env.VITE_API_BASE_URL || 'https://zeecare-backend-j180.onrender.com'}/api/v1/user/doctors`,
         { withCredentials: true }
       );
       setDoctors(data.doctors);
@@ -163,11 +163,13 @@ const AppointmentForm = () => {
             />
           </div>
           <div>
-            <select value={gender} onChange={(e) => setGender(e.target.value)}>
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
+            <label className="sr-only">Gender
+              <select value={gender} onChange={(e) => setGender(e.target.value)} aria-label="Gender">
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </label>
             <input
               type="date"
               placeholder="Appointment Date"
@@ -176,43 +178,49 @@ const AppointmentForm = () => {
             />
           </div>
           <div>
-            <select
-              value={department}
-              onChange={(e) => {
-                setDepartment(e.target.value);
-                setDoctorFirstName("");
-                setDoctorLastName("");
-              }}
-            >
-              {departmentsArray.map((depart, index) => {
-                return (
-                  <option value={depart} key={index}>
-                    {depart}
-                  </option>
-                );
-              })}
-            </select>
-            <select
-              value={`${doctorFirstName} ${doctorLastName}`}
-              onChange={(e) => {
-                const [firstName, lastName] = e.target.value.split(" ");
-                setDoctorFirstName(firstName);
-                setDoctorLastName(lastName);
-              }}
-              disabled={!department}
-            >
-              <option value="">Select Doctor</option>
-              {doctors
-                .filter((doctor) => doctor.doctorDepartment === department)
-                .map((doctor, index) => (
-                  <option
-                    value={`${doctor.firstName} ${doctor.lastName}`}
-                    key={index}
-                  >
-                    {doctor.firstName} {doctor.lastName}
-                  </option>
-                ))}
-            </select>
+            <label className="sr-only">Department
+              <select
+                value={department}
+                onChange={(e) => {
+                  setDepartment(e.target.value);
+                  setDoctorFirstName("");
+                  setDoctorLastName("");
+                }}
+                aria-label="Department"
+              >
+                {departmentsArray.map((depart, index) => {
+                  return (
+                    <option value={depart} key={index}>
+                      {depart}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
+            <label className="sr-only">Doctor
+              <select
+                value={`${doctorFirstName} ${doctorLastName}`}
+                onChange={(e) => {
+                  const [firstName, lastName] = e.target.value.split(" ");
+                  setDoctorFirstName(firstName);
+                  setDoctorLastName(lastName);
+                }}
+                disabled={!department}
+                aria-label="Select Doctor"
+              >
+                <option value="">Select Doctor</option>
+                {doctors
+                  .filter((doctor) => doctor.doctorDepartment === department)
+                  .map((doctor, index) => (
+                    <option
+                      value={`${doctor.firstName} ${doctor.lastName}`}
+                      key={index}
+                    >
+                      {doctor.firstName} {doctor.lastName}
+                    </option>
+                  ))}
+              </select>
+            </label>
           </div>
           <textarea
             rows="10"

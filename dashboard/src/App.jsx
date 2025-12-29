@@ -21,7 +21,7 @@ const App = () => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/api/v1/user/admin/me",
+          `${import.meta.env.VITE_API_BASE_URL || 'https://zeecare-backend-j180.onrender.com'}/api/v1/user/admin/me`,
           {
             withCredentials: true,
           }
