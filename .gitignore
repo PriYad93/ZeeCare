@@ -1,0 +1,10 @@
+# Ignore local environment files
+backend/config/.env
+*.env
+
+# Node modules
+node_modules/
+
+# Logs
+logs
+*.log
