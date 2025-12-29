@@ -11,7 +11,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     await axios
-      .get("http://localhost:4000/api/v1/user/patient/logout", {
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/user/patient/logout`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -19,7 +19,7 @@ const Navbar = () => {
         setIsAuthenticated(false);
       })
       .catch((err) => {
-        toast.error(err.response.data.message);
+        toast.error(err.response?.data?.message || 'Logout failed');
       });
   };
 
